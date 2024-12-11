@@ -1,27 +1,34 @@
 package com.example.TicketSystem.service;
 
 import com.example.TicketSystem.model.Ticket;
+import com.example.TicketSystem.repository.CustomerRepository;
 import com.sun.tools.javac.Main;
 import org.springframework.stereotype.Service;
 
 import java.util.Vector;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.logging.Logger;
 
 @Service
 public class TicketpoolService {
 
+
+    private final ConcurrentLinkedDeque<String> logMessages = new ConcurrentLinkedDeque<>();
+
     private int maxTicket;// Maximum size of the ticket pool
 
-    public int totalTicketsAdded =0; //// Counter for the total number of tickets added
+    public int totalTicketsAdded =0; // Counter for the total number of tickets added
 
     private int totalTickets;
+
+    //public final CustomerRepository customerRepository;
 
     private final ConfigurationService configurationService;
     private final Vector<Ticket> ticketPool =new Vector<>();
 
     private int totalticketsold =0;
 
-    private static final Logger logger = Logger.getLogger(TicketpoolService.class.getName());
+
 
 
     public TicketpoolService(ConfigurationService configurationService) {
@@ -51,9 +58,17 @@ public class TicketpoolService {
             }
 
             // Add a new ticket to the pool
-            Ticket ticket = new Ticket((totalTicketsAdded+1),(totalTicketsAdded+1),(totalTicketsAdded+1));
+            int i =0;
+            Ticket ticket = new Ticket((i++),(i++),(i++));
             ticketPool.add(ticket);
             totalTicketsAdded++;
+            /// /////////////////////////
+            String log = vendorName + " added Ticket #" + ticket.getId() +
+                    " - Current Pool Size: " + ticketPool.size() +
+                    " - Total Tickets Added: " + totalTicketsAdded;
+            logMessages.add(log);
+
+            /// /////////////////////
             System.out.println(vendorName + " added Ticket #" + ticket.getId() +
                     " - Current Pool Size: " + ticketPool.size() +
                     " - Total Tickets Added: " + totalTicketsAdded);
@@ -69,13 +84,20 @@ public class TicketpoolService {
     }
 
     public synchronized Ticket buyTicket(){
-        int i = 0;
+
         while(ticketPool.isEmpty()){
+            if (totalTicketsAdded >= configurationService.getConfiguration().getTotalTickets()) {
+                return null; // No more tickets will be added
+            }
             try{
-                System.out.println("Current Ticket pool is empty ...Customer  waiting");
+                System.out.println("\n================ CUSTOMER ACTIONS ================");
+                System.out.println(Thread.currentThread().getName() +" Current Ticket pool is empty ...Customer  waiting");
                 wait();
-            }catch (Exception e){
-                throw new RuntimeException();
+
+
+            }catch (InterruptedException e){
+                Thread.currentThread().interrupt();
+                return null;
             }
         }
 
@@ -83,9 +105,18 @@ public class TicketpoolService {
         totalticketsold++;
         System.out.println("Ticket bought by - " + Thread.currentThread().getName() + " - current size is - " + ticketPool.size() + " - Ticket is - " );
         System.out.println(" **********Ticket sold count is "+totalticketsold);
+        /// //////////////
+        String log = "Ticket bought by - " + Thread.currentThread().getName() +
+                " - Current Pool Size: " + ticketPool.size();
+        logMessages.add(log);
+        /// /////////////
         notifyAll();
 
         return ticket;
+    }
+
+    public ConcurrentLinkedDeque<String> getLogs() {
+        return logMessages;
     }
 
 }

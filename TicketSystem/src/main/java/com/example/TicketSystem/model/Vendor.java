@@ -1,14 +1,27 @@
 package com.example.TicketSystem.model;
 
-public class Vendor {
+import jakarta.persistence.*;
 
-    private String vendorName;
+@Entity
+public class Vendor {
+    @Id
     private int vendorId;
 
-    public Vendor(String vendorName, int vendorId) {
-        this.vendorName = vendorName;
-        this.vendorId = vendorId;
+
+    private String vendorName;
+
+    public Vendor() {
     }
+
+    public Vendor(String vendorName) {
+        this.vendorName = vendorName;
+    }
+
+    public Vendor(int vendorId, String vendorName) {
+        this.vendorId = vendorId;
+        this.vendorName = vendorName;
+    }
+
 
     public String getVendorName() {
         return vendorName;

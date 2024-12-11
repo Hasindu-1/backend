@@ -21,14 +21,14 @@ public class ConfigurationService {
 
     }
 
+    //check whether confutation is exits if not return last save configure details.
     public Configuration getConfiguration() {
         if (this.configuration == null) {
             return this.configuration = readFile("configure.json");
         }else {
             return this.configuration;
         }
-//        readFile("configure.json");
-//        return configuration;
+
     }
 
     public void saveToFile(Configuration configuration,String filename) {
@@ -67,14 +67,7 @@ public class ConfigurationService {
                 "|****************************************|\n" ;
     }
 
-   //111
-    public Configuration getConfigurationFromFile() {
-        if (this.configuration == null) {
-            return this.configuration = readFile("configure.json");
-        }else {
-            return this.configuration;
-        }
-    }
+
 
 
 

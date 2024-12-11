@@ -1,6 +1,8 @@
 package com.example.TicketSystem.controller;
 
+import com.example.TicketSystem.repository.CustomerRepository;
 import com.example.TicketSystem.repository.TicketPoolRepository;
+import com.example.TicketSystem.repository.VendorRepository;
 import com.example.TicketSystem.service.ConfigurationService;
 import com.example.TicketSystem.service.CustomerService;
 import com.example.TicketSystem.service.TicketpoolService;
@@ -28,33 +30,40 @@ public class ThreadController {
     private TicketPoolRepository ticketPoolRepository;
 
     @Autowired
+    private VendorRepository vendorRepository;
+
+    @Autowired
     private TicketpoolService ticketpoolService;
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @PostMapping("/threadrun")
     public String ThreadController() {
 
         TicketpoolService ticketpoolService1 = new TicketpoolService(configurationService);
 
-        VendorService vendorService1 = new VendorService(configurationService,ticketpoolService);
+        VendorService vendorService1 = new VendorService(configurationService,ticketpoolService,vendorRepository);
         Thread thread = new Thread(vendorService1);
         thread.start();
+        vendorService1.setVendorId(1);
 
-        VendorService vendorService2 = new VendorService(configurationService, ticketpoolService);
+        VendorService vendorService2 = new VendorService(configurationService, ticketpoolService,vendorRepository);
         Thread thread2 = new Thread(vendorService2);
         thread2.start();
+        vendorService2.setVendorId(2);
 
 
-        CustomerService customerService1 =new CustomerService(configurationService, ticketpoolService);
+        CustomerService customerService1 =new CustomerService(configurationService, ticketpoolService,customerRepository);
         Thread thread3 = new Thread(customerService1);
         thread3.start();
+        customerService1.setCustomerId(1);
 
-        CustomerService customerService2 =new CustomerService(configurationService, ticketpoolService);
+        CustomerService customerService2 =new CustomerService(configurationService, ticketpoolService,customerRepository);
         Thread thread4 = new Thread(customerService2);
         thread4.start();
+        customerService2.setCustomerId(2);
 
-//        if(){
-//            configurationService.getConfigurationFromFile();
-//        }
+
 
         return   "Thread successfully started";
 
