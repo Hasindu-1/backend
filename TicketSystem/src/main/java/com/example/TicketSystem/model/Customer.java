@@ -1,32 +1,30 @@
 package com.example.TicketSystem.model;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
 public class Customer {
 
     @Id
-    private int customerId;
+    private String customerId;
     private String customerName;
 
 
     public Customer() {
     }
 
-    public Customer(int customerId,String customerName) {
+    public Customer(String customerId,String customerName) {
         this.customerId = customerId;
         this.customerName = customerName;
 
     }
 
-    public int getCustomerId() {
+    public String getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
 

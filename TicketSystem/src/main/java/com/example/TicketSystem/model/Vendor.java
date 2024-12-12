@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 public class Vendor {
     @Id
-    private int vendorId;
+    private String vendorId;
 
 
     private String vendorName;
@@ -17,7 +17,7 @@ public class Vendor {
         this.vendorName = vendorName;
     }
 
-    public Vendor(int vendorId, String vendorName) {
+    public Vendor(String vendorId, String vendorName) {
         this.vendorId = vendorId;
         this.vendorName = vendorName;
     }
@@ -31,11 +31,11 @@ public class Vendor {
         this.vendorName = vendorName;
     }
 
-    public int getVendorId() {
+    public String getVendorId() {
         return vendorId;
     }
 
-    public void setVendorId(int vendorId) {
+    public void setVendorId(String vendorId) {
         this.vendorId = vendorId;
     }
 }

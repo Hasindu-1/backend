@@ -21,6 +21,7 @@ public class LogController {
     @GetMapping("/get")
     public List<String> getLogs() {
         // Fetch and return logs as a list
-        return ticketpoolService.getLogs().stream().collect(Collectors.toList());
+        //return ticketpoolService.getLogs().stream().collect(Collectors.toList());
+        return ticketpoolService.getLogs().stream().toList();
     }
 }

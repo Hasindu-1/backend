@@ -1,27 +1,23 @@
 package com.example.TicketSystem.service;
 
 import com.example.TicketSystem.model.Ticket;
-import com.example.TicketSystem.repository.CustomerRepository;
-import com.sun.tools.javac.Main;
+import com.example.TicketSystem.model.TicketPool;
+import com.example.TicketSystem.repository.TicketPoolRepository;
+import com.example.TicketSystem.repository.TicketRepository;
 import org.springframework.stereotype.Service;
-
 import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.logging.Logger;
 
 @Service
 public class TicketpoolService {
 
 
     private final ConcurrentLinkedDeque<String> logMessages = new ConcurrentLinkedDeque<>();
-
-    private int maxTicket;// Maximum size of the ticket pool
-
     public int totalTicketsAdded =0; // Counter for the total number of tickets added
-
-    private int totalTickets;
-
-    //public final CustomerRepository customerRepository;
+    private final TicketPoolRepository ticketPoolRepository;
+    private final TicketRepository ticketRepository;
+    private int AddId =1;
+    private int RemoveId =1;
 
     private final ConfigurationService configurationService;
     private final Vector<Ticket> ticketPool =new Vector<>();
@@ -31,14 +27,16 @@ public class TicketpoolService {
 
 
 
-    public TicketpoolService(ConfigurationService configurationService) {
+    public TicketpoolService(ConfigurationService configurationService,TicketPoolRepository ticketPoolRepository,TicketRepository ticketRepository) {
         this.configurationService = configurationService;
+        this.ticketPoolRepository=ticketPoolRepository;
+        this.ticketRepository=ticketRepository;
     }
 
 
 
 
-    public synchronized boolean addTickets(Ticket vendorName) {
+    public synchronized boolean addTickets(Ticket vendorName,String venId) {
         // Check if the total ticket limit has been reached
         while (totalTicketsAdded < configurationService.getConfiguration().getTotalTickets()) {
             // Wait if the ticket pool is full
@@ -57,19 +55,30 @@ public class TicketpoolService {
                 return false; // Indicate that no more tickets can be added
             }
 
+
+
             // Add a new ticket to the pool
-            int i =0;
-            Ticket ticket = new Ticket((i++),(i++),(i++));
+            Ticket ticket = new Ticket(AddId,"TicketingEvent",500,venId);
+            ticketRepository.save(ticket);
+
+            AddId++;
             ticketPool.add(ticket);
+
             totalTicketsAdded++;
-            /// /////////////////////////
-            String log = vendorName + " added Ticket #" + ticket.getId() +
+
+            //ticket pool database
+            TicketPool ticketPool1 = new TicketPool(venId,"Ticket Added");
+            ticketPoolRepository.save(ticketPool1);
+
+            String log = "\nVENDOR ACTIONS "+
+
+
+                    " added Ticket #" + ticket.getId() +
                     " - Current Pool Size: " + ticketPool.size() +
                     " - Total Tickets Added: " + totalTicketsAdded;
             logMessages.add(log);
 
-            /// /////////////////////
-            System.out.println(vendorName + " added Ticket #" + ticket.getId() +
+            System.out.println( " Added Ticket #" + ticket.getId() +
                     " - Current Pool Size: " + ticketPool.size() +
                     " - Total Tickets Added: " + totalTicketsAdded);
 
@@ -83,7 +92,7 @@ public class TicketpoolService {
         return false;
     }
 
-    public synchronized Ticket buyTicket(){
+    public synchronized Ticket buyTicket( String cusId){
 
         while(ticketPool.isEmpty()){
             if (totalTicketsAdded >= configurationService.getConfiguration().getTotalTickets()) {
@@ -101,15 +110,27 @@ public class TicketpoolService {
             }
         }
 
-        Ticket ticket = ticketPool.remove(0);
+
+        Ticket ticket = new Ticket(RemoveId,"TicketingEvent",500,cusId);
+        ticketRepository.save(ticket);
+        System.out.println("**********************************************" + RemoveId);
+        RemoveId++;
+
+
+        ticketPool.remove(0);
         totalticketsold++;
+
+        //Database
+        TicketPool ticketPool2 = new TicketPool(cusId,"Ticket Purchased");
+        ticketPoolRepository.save(ticketPool2);
+
         System.out.println("Ticket bought by - " + Thread.currentThread().getName() + " - current size is - " + ticketPool.size() + " - Ticket is - " );
         System.out.println(" **********Ticket sold count is "+totalticketsold);
-        /// //////////////
-        String log = "Ticket bought by - " + Thread.currentThread().getName() +
+
+        String log = "\n CUSTOMER ACTIONS  "+"Ticket bought by - " + Thread.currentThread().getName() +
                 " - Current Pool Size: " + ticketPool.size();
         logMessages.add(log);
-        /// /////////////
+
         notifyAll();
 
         return ticket;

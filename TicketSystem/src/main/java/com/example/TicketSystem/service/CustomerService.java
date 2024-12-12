@@ -14,30 +14,20 @@ public class CustomerService implements Runnable{
 
 
     private ConfigurationService configurationService;
-
-   // private TicketPoolRepository ticketPoolrepository;
-
     private TicketpoolService ticketpoolService;
-
     private CustomerRepository customerRepository;
-
-    private int customerId;
-
-
-    //private  final TicketPool tPool;//shared resource from Ticket pool for customer and Vendor.
+    private String customerId;
 
 
     public CustomerService( ConfigurationService customerService,TicketpoolService ticketpoolService,CustomerRepository customerRepository) {
-        //this.tPool = tPool;
-        this.configurationService= customerService;
-//        this.totalTickets=totalTickets;
-//        this.customerRetrievalRate=customerRetrievalRate;
-       // this.ticketPoolrepository=ticketPoolrepository;
-        this.ticketpoolService=ticketpoolService;
-        this.customerRepository=customerRepository;
+    this.configurationService= customerService;
+    this.ticketpoolService=ticketpoolService;
+    this.customerRepository=customerRepository;
     }
 
-    public void setCustomerId(int customerId) {
+
+
+    public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
 
@@ -45,7 +35,8 @@ public class CustomerService implements Runnable{
     public void run() {
         for (int i = 0; i < configurationService.getConfiguration().getTotalTickets(); i++) {
             try {
-                Ticket ticket = ticketpoolService.buyTicket();
+                Ticket ticket =new Ticket();
+                ticketpoolService.buyTicket(customerId);
                 if (ticket != null) {
                     Customer c1 = new Customer(customerId,Thread.currentThread().getName());
                     customerRepository.save(c1);

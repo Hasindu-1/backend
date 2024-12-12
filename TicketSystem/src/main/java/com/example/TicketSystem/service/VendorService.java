@@ -1,11 +1,8 @@
 package com.example.TicketSystem.service;
-
 import com.example.TicketSystem.model.Configuration;
 import com.example.TicketSystem.model.Ticket;
 import com.example.TicketSystem.model.Vendor;
-import com.example.TicketSystem.repository.TicketPoolRepository;
 import com.example.TicketSystem.repository.VendorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.logging.Logger;
@@ -13,20 +10,15 @@ import java.util.logging.Logger;
 @Service
 public class VendorService implements Runnable{
 
-    //private int vendorId;
     public static int globalV;
-
     private final ConfigurationService configurationService;
-    //private final TicketPoolRepository ticketPoolrepository;
     private final TicketpoolService ticketpoolService;
     private final VendorRepository vendorRepository;
 
-    private int vendorId;
-
-
-
+    private String vendorId;
     private static final Logger logger = Logger.getLogger(TicketpoolService.class.getName());
-   // private final CustomerService customerService;
+
+
 
 
 
@@ -35,10 +27,10 @@ public class VendorService implements Runnable{
         this.ticketpoolService = ticketpoolService;
         this.vendorRepository = vendorRepository;
 
-        //this.customerService = customerService;
+
     }
 
-    public void setVendorId(int vendorId) {
+    public void setVendorId(String vendorId) {
         this.vendorId = vendorId;
     }
 
@@ -49,10 +41,10 @@ public void run(){
     globalV=configuration.getTotalTickets();
     while(globalV > 0){
 
-        Ticket ticket =  new Ticket(vendorId,vendorId,vendorId);
+        Ticket ticket =  new Ticket();
 
         Vendor v1 = new Vendor(this.vendorId,Thread.currentThread().getName());
-        ticketpoolService.addTickets(ticket);
+        ticketpoolService.addTickets(ticket,vendorId);
         vendorRepository.save(v1);
 
         globalV--;

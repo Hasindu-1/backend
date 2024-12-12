@@ -21,12 +21,6 @@ public class ConfigurationController {
         return " Successfully Saved";
     }
 
-//    @PostMapping("/save")
-//    public ResponseEntity<String> saveConfiguration(@RequestBody Configuration configuration) {
-//        System.out.println("Received configuration: " + configuration);
-//        return ResponseEntity.ok("Configuration saved successfully!");
-//    }
-
     @GetMapping("/get")
     public Configuration getConfiguration() {
         configurationService.getConfiguration();
