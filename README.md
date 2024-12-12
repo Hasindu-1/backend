@@ -1,9 +1,9 @@
-#Real-Time Event Ticketing System
+# Real-Time Event Ticketing System
 This project uses Spring Boot to create a real-time event ticketing system. The system uses multithreading to simulate the simultaneous release and purchasing of event tickets. 
 It has tools for managing ticket pools, setting up ticketing parameters, and monitoring vendor and customer activity.
 The program uses thread-safe resource management techniques and adheres to the Object-Oriented Programming (OOP) paradigm.
 
-#Key Features
+## Key Features 
 1.Configure Input Manger
   Use Getmap anotation to get user data from front end local host 3000 using API .
   Total tickets, ticket release rate, customer retrieval rate, and maximum ticket capacity
@@ -23,11 +23,11 @@ The program uses thread-safe resource management techniques and adheres to the O
 
 
 
-#Technilogies Used
-Java
-Spring Boot
-Spring Data JPA
-Gson (JSON handling)
-Multithreading
-ConcurrentLinkedDeque (thread-safe logging)
+## USED
+Java,
+Spring Boot,
+Spring Data JPA,
+Gson (JSON handling),
+Multithreading,
+ConcurrentLinkedDeque (thread-safe logging),
 Vector (thread-safe ticket pool)
